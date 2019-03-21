@@ -62,7 +62,6 @@ void Folder:: touch(const string& name){
 	}
 	for (const auto i: folders){
 		if(i->getName() == name){
-			cout << "Folder exist\n";
 			folderExist = true;
 			fileExist = true;
 			i->updateTime();
@@ -277,7 +276,6 @@ void Folder::setPerm(const string& newPerm){
 }
 
 void Folder::updateTime(){
-	cout << "updating time of folder \n";
 	time_t now = time(0);
 	char* temp = ctime(&now);
 	temp[strlen(temp)-1] = '\0';

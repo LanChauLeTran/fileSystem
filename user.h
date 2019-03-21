@@ -5,6 +5,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <list>
 #include "group.h"
 
 using namespace std;
@@ -17,8 +18,10 @@ class User{
     public:
         User();
         User(const string& uName, const Group& gName);
-        string getName() {return name;}
+        string getName() const {return name;} 
         void printGroups() const;
+        void addGroup(const string& n);
+        bool groupExists(const string& g) const;
 };
 
 #endif

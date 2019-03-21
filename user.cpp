@@ -11,7 +11,24 @@ void User::printGroups() const
 {
     for(const auto i: groups)
     {
-        cout << i.getName() << '\t';
+        cout << i.getName() << ' ';
     }
     cout << endl;
+}
+
+void User::addGroup(const string& n)
+{
+    Group g(n);
+    groups.push_back(g);
+}
+
+bool User::groupExists(const string& g) const
+{
+    for(auto &i: groups)
+    {
+        if(i.getName() == g){
+            return true;
+        }
+    }
+    return false;
 }

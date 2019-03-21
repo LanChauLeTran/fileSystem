@@ -16,17 +16,18 @@ using namespace std;
 int main(){
 	map<string, Group> allGroups;
 	map<string, User> allUsers;
-	Group defaultG("Users");
+	Group defaultG("users");
 
 	allGroups.insert(pair<string, Group>(defaultG.getName(), defaultG));
 
 	Folder root;
 	Folder* curDir = &root;
 
-	User base("User", defaultG);
-	User* curUser = &base;
-	  
+	User base("user", defaultG);
 	allUsers.insert(pair<string, User>(base.getName(), base));
+
+	User* curUser = &(allUsers.find("user")->second);
+	  
 
 	string input;
 	bool cont = true;
@@ -146,7 +147,8 @@ int main(){
 			if(inputSize != 2){
 				cout << "Usage: groupadd [group]" << endl;
 			}
-			else if(inputSize == 2 && allGroups.find(parsed[1]) == allGroups.end()){
+			else if(inputSize == 2 && 
+					allGroups.find(parsed[1]) == allGroups.end()){
 				string gName = parsed[i+1];
 				Group newGroup(gName);
 				allGroups.insert(pair<string, Group>(gName, newGroup));
@@ -163,7 +165,7 @@ int main(){
 			else if(inputSize == 2){
 				if(allUsers.find(parsed[1]) == allUsers.end()){
 					cout << "groups: '" << parsed[1] 
-						 << "': no such user" << endl;
+						 << "': does not exist" << endl;
 				}
 				else{
 					allUsers.find(parsed[1])->second.printGroups();
@@ -182,14 +184,72 @@ int main(){
 			if(inputSize != 2){
 				cout << "Usage: useradd [username]" << endl;
 			}
-			else if (inputSize == 2 && allUsers.find(parsed[1]) == allUsers.end()){
+			else if (inputSize == 2 && 
+					 allUsers.find(parsed[1]) == allUsers.end()){
 				string uName = parsed[i+1];
 				User newUser(uName, defaultG);
 				allUsers.insert(pair<string, User>(uName, newUser));
 			}
 			else{
 				cout << "useradd: user '" << parsed[1]
-					 << "' already exists" << endl;
+					 << "' already exist" << endl;
+			}
+		}
+		else if(parsed[i] == "userdel"){
+			if(inputSize != 2){
+				cout << "Usage: userdel [username]" << endl;
+			}
+			else if (inputSize == 2 && 
+					 allUsers.find(parsed[1]) != allUsers.end()){
+				if(curUser->getName() == parsed[1]){
+					cout << "userdel: cannot remove current user" << endl;
+				}
+				else{
+					allUsers.erase(parsed[1]);
+				}
+			}
+			else if (inputSize == 2 &&
+					 allUsers.find(parsed[1]) == allUsers.end()){
+				cout << "userdel: user '" << parsed[1]
+					 << "' does not exist" << endl;
+			}
+		}
+		else if(parsed[i] == "switchto"){
+			if(inputSize != 2){
+				cout << "Usage: switchto [username]" << endl;
+			}
+			else if(inputSize == 2 &&
+					allUsers.find(parsed[1]) != allUsers.end()){
+				curUser = &(allUsers.find(parsed[1])->second);
+			}
+			else if(inputSize == 2 &&
+					allUsers.find(parsed[1]) == allUsers.end()){
+				cout << "switchto: user '" << parsed[1]
+					 << "' does not exist" << endl;
+			}
+		}
+		else if(parsed[i] == "usermod"){
+			if(inputSize != 4){
+				cout << "Usage: usermod -a -G [group]" << endl;
+			}
+			else if(inputSize == 4 && parsed[1] == "-a" && parsed[2] == "-G" && 
+					allGroups.find(parsed[3]) == allGroups.end()){
+				cout << "usermod: group '" << parsed[3]
+					 << "' does not exist" << endl;
+			}
+			else if(inputSize == 4 && parsed[1] == "-a" && parsed[2] == "-G" && 
+					allGroups.find(parsed[3]) != allGroups.end()){
+				if(!curUser->groupExists(parsed[3])){
+					curUser->addGroup(parsed[3]);
+				}
+				else if(curUser->groupExists(parsed[3])){
+					cout << "usermod: " << curUser->getName()
+						 << " already in '"
+						 << parsed[3] << "' " << endl;
+				}
+			}
+			else if(inputSize == 4){
+				cout << "Usage: usermod -a -G [group]" << endl;
 			}
 		}
 		else if(input == "exit" || input == "quit"){
