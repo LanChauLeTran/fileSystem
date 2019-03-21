@@ -168,6 +168,7 @@ int main(){
 						 << "': does not exist" << endl;
 				}
 				else{
+					cout << parsed[1] << " : ";
 					allUsers.find(parsed[1])->second.printGroups();
 				}
 			}
@@ -181,10 +182,50 @@ int main(){
 			}
 		}
 		else if(parsed[i] == "useradd"){
-			if(inputSize != 2){
-				cout << "Usage: useradd [username]" << endl;
+			if((inputSize < 2 && inputSize != 4) ||
+				(parsed[1] == "-G" && inputSize < 4)){
+				cout << "Usage: useradd [username]" << endl
+					 << "or\n"
+					 << "Usage: useradd -G [group1,group2,...,groupn] [username]"
+					 << endl;
 			}
-			else if (inputSize == 2 && 
+			else if(inputSize == 4 && parsed[1] == "-G"){
+				if(allUsers.find(parsed[3]) == allUsers.end()){
+					bool groupsExist = true;
+					stringstream ss(parsed[2]);
+					vector<string> g;
+					string str;
+					
+					while(getline(ss, str, ',')){
+						g.push_back(str);
+					}
+					
+					for(auto& i: g){
+						if(allGroups.find(i) == allGroups.end()){
+							cout << "useradd: group '" << i 
+								 << "' does not exist. Adding user failed."
+								 << endl;
+							groupsExist = false;
+							break;
+						}
+					}
+
+					if(groupsExist){
+						string uName = parsed[3];
+						User newUser(uName, defaultG);
+						allUsers.insert(pair<string, User>(uName, newUser));
+
+						for(auto& i: g){
+							allUsers.find(uName)->second.addGroup(i);
+						}
+					}
+				}
+				else if(allUsers.find(parsed[3]) != allUsers.end()){
+					cout << "useradd: user '" 
+						 << parsed[3] << "' already exists" <<endl;
+				}
+			}
+			else if (inputSize == 2 &&
 					 allUsers.find(parsed[1]) == allUsers.end()){
 				string uName = parsed[i+1];
 				User newUser(uName, defaultG);
