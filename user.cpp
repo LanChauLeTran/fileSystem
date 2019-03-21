@@ -22,6 +22,18 @@ void User::addGroup(const string& n)
     groups.push_back(g);
 }
 
+void User::removeGroup(const string& g)
+{
+    for(auto& i: groups)
+    {
+        if(i.getName() == g)
+        {
+            int index = (&i - &groups[0]);
+            groups.erase(groups.begin() + index);
+        }
+    }
+}
+
 bool User::groupExists(const string& g) const
 {
     for(auto &i: groups)

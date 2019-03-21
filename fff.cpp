@@ -196,8 +196,10 @@ int main(){
 			}
 		}
 		else if(parsed[i] == "userdel"){
-			if(inputSize != 2){
-				cout << "Usage: userdel [username]" << endl;
+			if(inputSize < 2){
+				cout << "Usage: userdel [username] " << endl << "or\n"
+					 << "Usage: userdel -G [group] [username]" << endl;
+				
 			}
 			else if (inputSize == 2 && 
 					 allUsers.find(parsed[1]) != allUsers.end()){
@@ -208,10 +210,29 @@ int main(){
 					allUsers.erase(parsed[1]);
 				}
 			}
+			else if((inputSize == 2 && parsed[1] == "-G") ||
+					(inputSize == 3 && parsed[1] == "-G")){
+				cout << "userde: missing operands" << endl;
+			}
 			else if (inputSize == 2 &&
 					 allUsers.find(parsed[1]) == allUsers.end()){
 				cout << "userdel: user '" << parsed[1]
 					 << "' does not exist" << endl;
+			}
+			else if(inputSize == 4 && parsed[1] == "-G" &&
+            		allUsers.find(parsed[3]) != allUsers.end()){
+        		if(allUsers.find(parsed[3])->second.groupExists(parsed[2])){
+					allUsers.find(parsed[3])->second.removeGroup(parsed[2]);
+      			}
+        		else{
+            		cout << "userdel: group '" << parsed[2] 
+                	    << "' does not have user '" << parsed[3]
+                	    << "'" << endl;
+        		}
+    		}
+			else if(inputSize == 4 && parsed[1] == "-G" &&
+            		allUsers.find(parsed[3]) == allUsers.end()){
+				cout <<"userdel: user '" << parsed[3] << "' does not exist\n";
 			}
 		}
 		else if(parsed[i] == "switchto"){
