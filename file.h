@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include "user.h"
+#include "group.h"
 
 using namespace std;
 

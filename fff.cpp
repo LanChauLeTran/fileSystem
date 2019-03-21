@@ -6,23 +6,38 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <algorithm>
+#include <map>
 #define BOLDBLUE "\033[1m\033[34m"  
+#define BOLDGREEN   "\033[1m\033[32m"
 #define RESET "\033[0m"
 
 using namespace std;
 
 int main(){
+	map<string, Group> allGroups;
+	map<string, User> allUsers;
+	Group defaultG("Users");
+
+	allGroups.insert(pair<string, Group>(defaultG.getName(), defaultG));
+
 	Folder root;
 	Folder* curDir = &root;
+
+	User base("User", defaultG);
+	User* curUser = &base;
 	  
+	allUsers.insert(pair<string, User>(base.getName(), base));
+
 	string input;
 	bool cont = true;
 	vector<string> parsed;
 	string token;
 
+
 	while(cont){ //read in commands until exit or quit
 		parsed.clear();
-		cout << BOLDBLUE << curDir->getName() << RESET << "$ ";
+		cout << BOLDGREEN << curUser->getName() << RESET << ":"
+			 << BOLDBLUE << curDir->getName() << RESET << "$ ";
 
 		getline(cin, input);
 		istringstream ss(input);
@@ -125,6 +140,56 @@ int main(){
 				for(i = 1; i < inputSize; i++){
 					curDir->touch(parsed[i]);
 				}
+			}
+		}
+		else if(parsed[i] == "groupadd"){
+			if(inputSize != 2){
+				cout << "Usage: groupadd [group]" << endl;
+			}
+			else if(inputSize == 2 && allGroups.find(parsed[1]) == allGroups.end()){
+				string gName = parsed[i+1];
+				Group newGroup(gName);
+				allGroups.insert(pair<string, Group>(gName, newGroup));
+			}
+			else{
+				cout << "groupadd: group '" << parsed[1] 
+					 << "' already exists" << endl;
+			}
+		}
+		else if(parsed[i] == "groups"){
+			if(inputSize == 1){
+				curUser->printGroups();
+			}
+			else if(inputSize == 2){
+				if(allUsers.find(parsed[1]) == allUsers.end()){
+					cout << "groups: '" << parsed[1] 
+						 << "': no such user" << endl;
+				}
+				else{
+					allUsers.find(parsed[1])->second.printGroups();
+				}
+			}
+		}
+		else if(parsed[i] == "whoami"){
+			if(inputSize == 1){
+				cout << curUser->getName() << endl;
+			}
+			else{
+				cout << "whoami: extra operands" << endl;
+			}
+		}
+		else if(parsed[i] == "useradd"){
+			if(inputSize != 2){
+				cout << "Usage: useradd [username]" << endl;
+			}
+			else if (inputSize == 2 && allUsers.find(parsed[1]) == allUsers.end()){
+				string uName = parsed[i+1];
+				User newUser(uName, defaultG);
+				allUsers.insert(pair<string, User>(uName, newUser));
+			}
+			else{
+				cout << "useradd: user '" << parsed[1]
+					 << "' already exists" << endl;
 			}
 		}
 		else if(input == "exit" || input == "quit"){

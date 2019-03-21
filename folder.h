@@ -2,6 +2,8 @@
 #define FOLDER_H
 
 #include "file.h"
+#include "user.h"
+#include "group.h"
 
 class Folder{
 	private:
@@ -9,12 +11,14 @@ class Folder{
 		string name;
 		string permissions;
 		string timeStamp;
+		string user;
+		string group;
 		int folderSize;
 		vector<File> files;
 		vector<Folder* > folders;
 	
 	public:
-		Folder(): parent(nullptr), name("/") {}
+		Folder(): parent(nullptr), name("/"), user("User"), group("Default") {}
 		Folder(const string& folderName);
 		~Folder();
 
