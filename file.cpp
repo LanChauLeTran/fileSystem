@@ -1,6 +1,6 @@
 #include "file.h"
 
-File::File(const string& fileName){
+File::File(const string& fileName, const string& u, const string& g){
 	permissions = "rwxrwxrwx";
 	time_t now = time(0);
 	char* temp = ctime(&now);
@@ -8,6 +8,8 @@ File::File(const string& fileName){
 	timeStamp = temp;
 
 	name = fileName;
+	user = u;
+	group = g;
 	fileSize = 1024;
 }
 
@@ -21,6 +23,34 @@ string File::getPerm() const{
 
 string File::getTime() const{
 	return timeStamp;
+}
+
+string File::getUser() const{
+	return user;
+}
+
+string File::getGroup() const{
+	return group;
+}
+
+bool File::isOwner(const string& n) const{
+	if(n == user){
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
+}
+
+bool File::isGroup(const vector<Group>& g) const{
+	for(auto& i: g){
+		if(group == i.getName()){
+			return true;
+		}
+	}
+	return false;
 }
 
 int File::getSize() const{

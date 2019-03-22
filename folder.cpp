@@ -4,9 +4,11 @@
 #define BOLDBLUE "\033[1m\033[34m"  
 #define RESET "\033[0m"
 
-Folder::Folder(const string& folderName){
-	name = folderName;
+Folder::Folder(const string& folderName, const string& u, const string& g){
 	permissions = "rwxrwxrwx";
+	name = folderName;
+	user = u;
+	group = g;
 	parent = this;
 	time_t now = time(0);
 	char* temp = ctime(&now);
@@ -50,7 +52,7 @@ Folder* Folder::getParent(){
 //Make sure name doesnt already exist as either a file or fodler
 //before creating new file.
 //if it exist, update timestamp, else create a new object file
-void Folder:: touch(const string& name){
+void Folder:: touch(const string& name, const string& u, const string& g){
 	bool fileExist = false;
 	bool folderExist = false;
 	for (auto &i: files){
@@ -69,18 +71,18 @@ void Folder:: touch(const string& name){
 	}
 	if(!fileExist){
 		folderExist = true;
-		files.push_back(File(name));
+		files.push_back(File(name, u, g));
 	}
 	if(!folderExist)
 	{
-		this->mkdir(name);
+		this->mkdir(name, u, g);
 	}
 }
 
 //param: string for directory name
 //Make sure name doesnt already exist as either a file or folder
 //if exist, let user know, else create new object folder
-void Folder::mkdir(const string& dirName){
+void Folder::mkdir(const string& dirName, const string&u, const string& g){
 	bool exist = false;
 	for (const auto i: folders){
 		if(i->getName() == dirName){
@@ -99,6 +101,8 @@ void Folder::mkdir(const string& dirName){
 		auto newFolder = new Folder();
 		newFolder->parent = this;
 		newFolder->name = dirName;
+		newFolder->user = u;
+		newFolder->group = g;
 		newFolder->permissions = "rwxrwxrwx";
 		time_t now = time(0);
 		char* temp = ctime(&now);
@@ -111,32 +115,61 @@ void Folder::mkdir(const string& dirName){
 
 //no params
 //walk thorugh vector of files and output their names
-void Folder::ls() const{
-	for (auto i: files){
-		cout << i.getName() << '\t';
+void Folder::ls(const User& u) const{
+	for (auto& i: files){
+		if( (i.getPerm()[3] == 'r' && u.groupExists(i.getGroup())) ||
+			(i.isOwner(u.getName()) && i.getPerm()[0] == 'r') ||
+			(i.getPerm()[6] == 'r') ){
+			cout << i.getName() << '\t';
+		}
 	}
-	for (auto i: folders){
-		cout << BOLDBLUE << i->getName() << RESET << '\t';
+	for (auto& i: folders){
+		if( (i->permissions[6] == 'r') ||
+			(i->permissions[3] == 'r' && u.groupExists(i->getGroup())) ||
+			(i->permissions[0] == 'r' && isOwner(u.getName())) ){
+			cout << BOLDBLUE << i->getName() << RESET << '\t';
+		}
 	}
 	cout << endl;
 }
 
+bool Folder::isOwner(const string& n) const{
+	if(n == user){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
 //run through vector of files then folders
 //print member variables via getters
-void Folder::lsl() const{
-	for (auto i: files){
-		cout << "-" << i.getPerm() 
-			 << '\t' << i.getSize()
-			 << '\t' << i.getTime()
-			 << '\t' << i.getName()
-			 << endl;
+void Folder::lsl(const User& u) const{
+	for (auto& i: files){
+		if( (i.getPerm()[3] == 'r' && u.groupExists(i.getGroup())) ||
+			(i.isOwner(u.getName()) && i.getPerm()[0] == 'r') ||
+			(i.getPerm()[6] == 'r') ){
+			cout << "-" << i.getPerm() 
+				<< '\t' << i.getUser()
+				<< "\t\t" << i.getGroup()
+				<< "\t\t" << i.getSize()
+				<< '\t' << i.getTime()
+				<< '\t' << i.getName()
+				<< endl;
+		}
 	}
-	for (auto i: folders){
-		cout << "d" << i->getPerm()
-			 << '\t' << i->getSize()
-			 << '\t' << i->getTime()
-			 << '\t' << BOLDBLUE << i->getName() << RESET 
-			 << endl;
+	for (auto& i: folders){
+		if( (i->permissions[6] == 'r') ||
+			(i->permissions[3] == 'r' && u.groupExists(i->getGroup())) ||
+			(i->permissions[0] == 'r' && isOwner(u.getName())) ){
+			cout << "d" << i->getPerm()
+				<< '\t' << i->getUser()
+				<< "\t\t" << i->getGroup()
+				<< "\t\t" << i->getSize()
+				<< '\t' << i->getTime()
+				<< '\t' << BOLDBLUE << i->getName() << RESET 
+				<< endl;
+		}
 	}
 }
 
@@ -280,4 +313,13 @@ void Folder::updateTime(){
 	char* temp = ctime(&now);
 	temp[strlen(temp)-1] = '\0';
 	timeStamp = temp;
+}
+
+bool Folder::fileExists(const string& name) const{
+	for(auto& i: files){
+		if(i.getName() == name){
+			return true;
+		}
+	}
+	return false;
 }

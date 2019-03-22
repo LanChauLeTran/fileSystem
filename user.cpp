@@ -24,6 +24,10 @@ void User::addGroup(const string& n)
 
 void User::removeGroup(const string& g)
 {
+    if(groups.size() == 1){
+        cout << "user must have at least one group" << endl;
+        return;
+    }
     for(auto& i: groups)
     {
         if(i.getName() == g)
@@ -43,4 +47,9 @@ bool User::groupExists(const string& g) const
         }
     }
     return false;
+}
+
+string User::topGroup() const
+{
+    return groups[0].getName();
 }

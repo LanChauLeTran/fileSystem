@@ -55,10 +55,10 @@ int main(){
 		}
 		else if(parsed[i] == "ls"){
 			if(inputSize == 1){
-				curDir->ls();
+				curDir->ls(*curUser);
 			}
 			else if(inputSize == 2 && parsed[1] == "-l"){
-				curDir->lsl();
+				curDir->lsl(*curUser);
 			}
 			else{ //invalid inputs handling
 				cout << "ls: no such file or directory" << endl;
@@ -103,7 +103,7 @@ int main(){
 				cout << "mkdr: too many operands" << endl;
 			}
 			else{
-				curDir->mkdir(parsed[1]);
+				curDir->mkdir(parsed[1], curUser->getName(), curUser->topGroup());
 			}
 		}
 		else if(parsed[i] == "rm"){
@@ -139,7 +139,7 @@ int main(){
 			}
 			else{
 				for(i = 1; i < inputSize; i++){
-					curDir->touch(parsed[i]);
+					curDir->touch(parsed[i], curUser->getName(), curUser->topGroup());
 				}
 			}
 		}
@@ -312,6 +312,17 @@ int main(){
 			}
 			else if(inputSize == 4){
 				cout << "Usage: usermod -a -G [group]" << endl;
+			}
+		}
+		else if(inputSize == 1 && parsed[i][0] ==  '.' && parsed[i][1] == '/'){
+			parsed[i].erase(parsed[i].begin());
+			parsed[i].erase(parsed[i].begin());
+			if(curDir->fileExists(parsed[i])){
+				cout << parsed[i] << " ran/executed" << endl;
+			}
+			else{
+				cout << "bash: ./" << parsed[i] 
+					 << ": no such file or directory" << endl;
 			}
 		}
 		else if(input == "exit" || input == "quit"){

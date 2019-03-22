@@ -16,14 +16,22 @@ class File{
 		string name;
 		string permissions;
 		string timeStamp;
+		string user;
+		string group;
 		int fileSize;
 	public:
 		File();
-		File(const string& fileName);
+		File(const string& fileName,  const string& user, const string& group);
 
 		string getName() const;
 		string getPerm() const;
 		string getTime() const;
+		string getUser() const;
+		string getGroup() const;
+
+		bool isOwner(const string& n) const;
+		bool isGroup(const vector<Group>& g) const;
+
 		int getSize() const;
 
 		void updateTime();

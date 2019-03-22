@@ -23,6 +23,7 @@ class User{
         void addGroup(const string& n);
         void removeGroup(const string& g);
         bool groupExists(const string& g) const;
+        string topGroup() const;
 };
 
 #endif
