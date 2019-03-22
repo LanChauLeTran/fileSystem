@@ -36,7 +36,7 @@ class Folder{
 		void setPerm(const string& newPerm);
 		void updateTime();
 
-		void touch(const string& fileName, const string& u, const string& g);
+		void touch(const string& fileName, const User& u);
 		void mkdir(const string& dirName, const string& u, const string& g);
 		void ls(const User& user) const;
 		void lsl(const User& user) const;

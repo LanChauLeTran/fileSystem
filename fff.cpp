@@ -139,7 +139,7 @@ int main(){
 			}
 			else{
 				for(i = 1; i < inputSize; i++){
-					curDir->touch(parsed[i], curUser->getName(), curUser->topGroup());
+					curDir->touch(parsed[i], *curUser);
 				}
 			}
 		}

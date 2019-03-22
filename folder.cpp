@@ -52,14 +52,22 @@ Folder* Folder::getParent(){
 //Make sure name doesnt already exist as either a file or fodler
 //before creating new file.
 //if it exist, update timestamp, else create a new object file
-void Folder:: touch(const string& name, const string& u, const string& g){
+void Folder:: touch(const string& name, const User& u){
 	bool fileExist = false;
 	bool folderExist = false;
 	for (auto &i: files){
 		if(i.getName() == name){
 			fileExist = true;
 			folderExist = true;
-			i.updateTime();
+			cout << "file permission: " << i.getPerm() << endl;
+			if( (i.getPerm()[7] == 'w') ||
+				(i.getPerm()[4] == 'w' && u.groupExists(i.getGroup())) ){
+				cout << "updating time" << endl;
+				i.updateTime();
+			}
+			else{
+				cout << "touch: permission denied" << endl;
+			}
 		}
 	}
 	for (const auto i: folders){
@@ -71,11 +79,11 @@ void Folder:: touch(const string& name, const string& u, const string& g){
 	}
 	if(!fileExist){
 		folderExist = true;
-		files.push_back(File(name, u, g));
+		files.push_back(File(name, u.getName(), u.topGroup()));
 	}
 	if(!folderExist)
 	{
-		this->mkdir(name, u, g);
+		this->mkdir(name, u.getName(), u.topGroup());
 	}
 }
 
@@ -296,11 +304,11 @@ void Folder::chmod(const string& obj, const string& perm){
 	}
 	else if(fileExist){
 		files[indexOfFile].setPerm(newPerm);
-		files[indexOfFile].updateTime();
+		//files[indexOfFile].updateTime();
 	}
 	else if(folderExist){
 		folders[indexOfFolder]->setPerm(newPerm);
-		folders[indexOfFolder]->updateTime();
+		//folders[indexOfFolder]->updateTime();
 	}
 }
 
