@@ -58,7 +58,6 @@ int File::getSize() const{
 }
 
 void File::updateTime(){
-	cout << "file update time called " << endl;
 	time_t now = time(0);
 	char* temp = ctime(&now);
 	temp[strlen(temp)-1] = '\0';

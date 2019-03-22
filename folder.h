@@ -46,6 +46,7 @@ class Folder{
 		void rm(const string& target);
 		void chmod(const string& obj, const string& perm);
 		bool fileExists(const string& fileName) const;
+		void xFile(const string& f, const User& u) const;
 };
 
 #endif

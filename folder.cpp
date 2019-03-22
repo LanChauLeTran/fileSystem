@@ -48,6 +48,27 @@ Folder* Folder::getParent(){
 	}
 }
 
+void Folder::xFile(const string& f, const User& u) const{
+	if(fileExists(f)){
+		for(auto& i: files){
+			if(i.getName() == f){
+				if( (i.getPerm()[8] == 'x') ||
+					(i.getPerm()[5] == 'x' && u.groupExists(i.getGroup())) ||
+					(i.getPerm()[2] == 'x' && i.isOwner(u.getName())) ){
+					cout << "bash: file '" << f << "' ran/executed" << endl;
+				}
+				else{
+					cout << "bash: permission denied" << endl;
+				}
+			}
+		}
+	}
+	else{
+		cout << "bash: ./" << f
+				<< ": no such file or directory" << endl;
+	}
+}
+
 //param: string for file name
 //Make sure name doesnt already exist as either a file or fodler
 //before creating new file.
@@ -59,10 +80,9 @@ void Folder:: touch(const string& name, const User& u){
 		if(i.getName() == name){
 			fileExist = true;
 			folderExist = true;
-			cout << "file permission: " << i.getPerm() << endl;
 			if( (i.getPerm()[7] == 'w') ||
-				(i.getPerm()[4] == 'w' && u.groupExists(i.getGroup())) ){
-				cout << "updating time" << endl;
+				(i.getPerm()[4] == 'w' && u.groupExists(i.getGroup())) ||
+				(i.getPerm()[1] == 'w' && i.isOwner(u.getName())) ){
 				i.updateTime();
 			}
 			else{

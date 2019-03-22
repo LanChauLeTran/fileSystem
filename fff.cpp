@@ -317,13 +317,7 @@ int main(){
 		else if(inputSize == 1 && parsed[i][0] ==  '.' && parsed[i][1] == '/'){
 			parsed[i].erase(parsed[i].begin());
 			parsed[i].erase(parsed[i].begin());
-			if(curDir->fileExists(parsed[i])){
-				cout << parsed[i] << " ran/executed" << endl;
-			}
-			else{
-				cout << "bash: ./" << parsed[i] 
-					 << ": no such file or directory" << endl;
-			}
+			curDir->xFile(parsed[i], *curUser);
 		}
 		else if(input == "exit" || input == "quit"){
 			cont = false;
