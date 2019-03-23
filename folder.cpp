@@ -272,7 +272,28 @@ void Folder::rmdir(const string& dir){
 //walk file vector to make sure the file exist
 //if does not exist, print error message
 //if exist delete file object
-void Folder::rm(const string& target){
+void Folder::rm(const string& target, const User& u){
+	if(fileExists(target)){
+		for(unsigned int i = 0; i < files.size(); i++) {
+			if(files[i].getName() == target){
+				if( (files[i].getPerm()[7] == 'w') ||
+					(files[i].getPerm()[4] == 'w' &&  
+					 u.groupExists(files[i].getGroup())) ||
+					(files[i].getPerm()[1] == 'w' && 
+					 files[i].isOwner(u.getName())) ){
+					files.erase(files.begin() +i);
+				}
+				else{
+					cout << "rm: permission denied" << endl;
+				}
+			}
+		}
+	}
+	else{
+		cout << "rm: cannot remove '" << target << "': No such file" << endl;
+	}
+
+	/*
 	bool exist = false;
 	for (unsigned int i = 0; i < files.size(); i++){
 		if(files[i].getName() == target){
@@ -282,7 +303,7 @@ void Folder::rm(const string& target){
 	}
 	if(!exist){
 		cout << "rm: cannot remove '" << target << "': No such file" << endl;
-	}
+	}*/
 }
 
 //param: string for the object to change permission

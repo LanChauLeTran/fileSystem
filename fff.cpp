@@ -114,7 +114,7 @@ int main(){
 				cout << "rm: too many operands" << endl;
 			}
 			else{
-				curDir->rm(parsed[1]);
+				curDir->rm(parsed[1], *curUser);
 			}
 		}
 		else if(parsed[i] == "chmod"){
