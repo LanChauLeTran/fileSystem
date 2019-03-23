@@ -92,7 +92,7 @@ int main(){
 				cout << "rmdir: too many operands" << endl;
 			}
 			else{
-				curDir->rmdir(parsed[1]);
+				curDir->rmdir(parsed[1], *curUser);
 			}
 		}
 		else if(parsed[i] == "mkdir"){

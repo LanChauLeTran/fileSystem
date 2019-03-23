@@ -254,7 +254,30 @@ void Folder::pwd(){
 //walk folder vector to make sure the folder exists
 //if does not exist, print error message
 //if exist, delete pointer and  erase folder 
-void Folder::rmdir(const string& dir){
+void Folder::rmdir(const string& dir, const User& u){
+	if(folderExists(dir)){
+		for(unsigned int i = 0; i < folders.size(); i++) {
+			if(folders[i]->getName() == dir){
+				if( (folders[i]->getPerm()[7] == 'w') ||
+					(folders[i]->getPerm()[4] == 'w' &&
+					 u.groupExists(folders[i]->getGroup())) ||
+					(folders[i]->getPerm()[1] == 'w' && 
+					 folders[i]->isOwner(u.getName())) ){
+					delete folders[i];
+					folders.erase(folders.begin() + i);
+				}
+				else{
+					cout << "rmdir: permission denied" << endl;
+				}
+			}
+		}
+	}
+	else{
+		cout << "rmdir: cannot remove '" << dir 
+			 << "': No such directory" << endl;
+	}
+
+	/*
 	bool exist = false;
 	for (unsigned int i = 0; i < folders.size(); i++){
 		if(folders[i]->getName() == dir){
@@ -265,7 +288,7 @@ void Folder::rmdir(const string& dir){
 	}
 	if(!exist){
 		cout << "rmdir: directory does not exist" << endl;
-	}
+	}*/
 }
 
 //param: string with  file name to delete
@@ -292,18 +315,6 @@ void Folder::rm(const string& target, const User& u){
 	else{
 		cout << "rm: cannot remove '" << target << "': No such file" << endl;
 	}
-
-	/*
-	bool exist = false;
-	for (unsigned int i = 0; i < files.size(); i++){
-		if(files[i].getName() == target){
-			files.erase(files.begin() + i);
-			exist = true;
-		}
-	}
-	if(!exist){
-		cout << "rm: cannot remove '" << target << "': No such file" << endl;
-	}*/
 }
 
 //param: string for the object to change permission
@@ -382,6 +393,15 @@ void Folder::updateTime(){
 bool Folder::fileExists(const string& name) const{
 	for(auto& i: files){
 		if(i.getName() == name){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Folder::folderExists(const string& f) const{
+	for(auto& i: folders){
+		if(i->getName() == f){
 			return true;
 		}
 	}

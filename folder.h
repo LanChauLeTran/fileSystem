@@ -42,10 +42,11 @@ class Folder{
 		void lsl(const User& user) const;
 		Folder* cd(const string& name, const User& u);
 		void pwd();
-		void rmdir(const string& dir);
+		void rmdir(const string& dir, const User& u);
 		void rm(const string& target, const User& u);
 		void chmod(const string& obj, const string& perm);
 		bool fileExists(const string& fileName) const;
+		bool folderExists(const string& f) const;
 		void xFile(const string& f, const User& u) const;
 };
 
