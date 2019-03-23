@@ -103,7 +103,7 @@ int main(){
 				cout << "mkdr: too many operands" << endl;
 			}
 			else{
-				curDir->mkdir(parsed[1], curUser->getName(), curUser->topGroup());
+				curDir->mkdir(parsed[1], *curUser);
 			}
 		}
 		else if(parsed[i] == "rm"){

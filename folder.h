@@ -19,7 +19,7 @@ class Folder{
 	
 	public:
 		Folder(const string& folderName, const string& u, const string& g);
-		Folder(): parent(nullptr), name("home"), user("user"), group("Users") {}
+		Folder();
 		~Folder();
 
 		string getName() const;
@@ -37,7 +37,7 @@ class Folder{
 		void updateTime();
 
 		void touch(const string& fileName, const User& u);
-		void mkdir(const string& dirName, const string& u, const string& g);
+		void mkdir(const string& dirName, const User& u);
 		void ls(const User& user) const;
 		void lsl(const User& user) const;
 		Folder* cd(const string& name, const User& u);

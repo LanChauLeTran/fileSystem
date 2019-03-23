@@ -4,6 +4,14 @@
 #define BOLDBLUE "\033[1m\033[34m"  
 #define RESET "\033[0m"
 
+Folder::Folder(){
+	parent = nullptr;
+	name = "home";
+	user = "user";
+	group = "Users";
+	permissions = "rwxrwxrwx";
+}
+
 Folder::Folder(const string& folderName, const string& u, const string& g){
 	permissions = "rwxrwxrwx";
 	name = folderName;
@@ -110,14 +118,45 @@ void Folder:: touch(const string& name, const User& u){
 	}
 	if(!folderExist)
 	{
-		this->mkdir(name, u.getName(), u.topGroup());
+		this->mkdir(name, u);
 	}
 }
 
 //param: string for directory name
 //Make sure name doesnt already exist as either a file or folder
 //if exist, let user know, else create new object folder
-void Folder::mkdir(const string& dirName, const string&u, const string& g){
+void Folder::mkdir(const string& d, const User& u){
+	if(!folderExists(d)){
+		bool create = false;
+		if( (permissions[7] == 'w') || 
+			(permissions[4] == 'w' && u.groupExists(group)) ||
+			(permissions[1] == 'w' && isOwner(u.getName())) ){
+			create = true;
+		}
+
+		if(create){
+			auto newFolder = new Folder();
+			newFolder->parent = this;
+			newFolder->name = d;
+			newFolder->user = u.getName();
+			newFolder->group = u.topGroup();
+			newFolder->permissions = "rwxrwxrwx";
+			time_t now = time(0);
+			char* temp = ctime(&now);
+			temp[strlen(temp)-1] = '\0';
+			newFolder->timeStamp = temp;
+			newFolder->folderSize = 1024;
+			folders.push_back(newFolder);
+		}
+		else{
+			cout << "mkdir: permission denied" << endl;
+		}
+	}
+	else{
+		cout << "mkdir: '" << d << "' arlready exists" << endl;
+	}
+
+	/*
 	bool exist = false;
 	for (const auto i: folders){
 		if(i->getName() == dirName){
@@ -136,8 +175,8 @@ void Folder::mkdir(const string& dirName, const string&u, const string& g){
 		auto newFolder = new Folder();
 		newFolder->parent = this;
 		newFolder->name = dirName;
-		newFolder->user = u;
-		newFolder->group = g;
+		newFolder->user = u.getName();
+		newFolder->group = u.topGroup();
 		newFolder->permissions = "rwxrwxrwx";
 		time_t now = time(0);
 		char* temp = ctime(&now);
@@ -145,7 +184,7 @@ void Folder::mkdir(const string& dirName, const string&u, const string& g){
 		newFolder->timeStamp = temp;
 		newFolder->folderSize = 1024;
 		folders.push_back(newFolder);
-	}
+	}*/
 }
 
 //no params
@@ -276,19 +315,6 @@ void Folder::rmdir(const string& dir, const User& u){
 		cout << "rmdir: cannot remove '" << dir 
 			 << "': No such directory" << endl;
 	}
-
-	/*
-	bool exist = false;
-	for (unsigned int i = 0; i < folders.size(); i++){
-		if(folders[i]->getName() == dir){
-			exist = true;
-			delete folders[i];
-			folders.erase(folders.begin() + i);
-		}
-	}
-	if(!exist){
-		cout << "rmdir: directory does not exist" << endl;
-	}*/
 }
 
 //param: string with  file name to delete
