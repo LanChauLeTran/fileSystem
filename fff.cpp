@@ -127,7 +127,7 @@ int main(){
 				cout << "chmod: invalid code" << endl;
 			}
 			else if(inputSize == 3 && permissionSize == 3){
-				curDir->chmod(parsed[2], parsed[1]);
+				curDir->chmod(parsed[2], parsed[1], *curUser);
 			}
 			else if(inputSize == 3 && parsed[1].size() > 3){
 				cout << "chmod: invalid code: '" << parsed[1] << "'" << endl;

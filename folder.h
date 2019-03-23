@@ -44,7 +44,7 @@ class Folder{
 		void pwd();
 		void rmdir(const string& dir, const User& u);
 		void rm(const string& target, const User& u);
-		void chmod(const string& obj, const string& perm);
+		void chmod(const string& obj, const string& perm, const User& u);
 		bool fileExists(const string& fileName) const;
 		bool folderExists(const string& f) const;
 		void xFile(const string& f, const User& u) const;

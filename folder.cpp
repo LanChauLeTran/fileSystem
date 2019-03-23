@@ -133,7 +133,6 @@ void Folder::mkdir(const string& d, const User& u){
 			(permissions[1] == 'w' && isOwner(u.getName())) ){
 			create = true;
 		}
-
 		if(create){
 			auto newFolder = new Folder();
 			newFolder->parent = this;
@@ -349,7 +348,7 @@ void Folder::rm(const string& target, const User& u){
 //make sure the object to change permission for exist
 //either a file or folder
 //set new permission and update time if exist.
-void Folder::chmod(const string& obj, const string& perm){
+void Folder::chmod(const string& obj, const string& perm, const User& u){
 	map<string, string> permValues;
 	permValues.insert(pair<string, string>("0", "---"));
 	permValues.insert(pair<string, string>("1", "--x"));
@@ -396,12 +395,20 @@ void Folder::chmod(const string& obj, const string& perm){
 		return;
 	}
 	else if(fileExist){
-		files[indexOfFile].setPerm(newPerm);
-		//files[indexOfFile].updateTime();
+		int i = indexOfFile;
+		string fPerm = files[i].getPerm();
+
+		if( (fPerm[7] == 'w') || 
+			(fPerm[4] == 'w' && u.groupExists(files[i].getGroup())) ||
+			(fPerm[1] == 'w' && isOwner(u.getName())) ) {
+			files[i].setPerm(newPerm);
+		}
+		else{
+			cout << "chmod: permission denied" << endl;
+		}
 	}
 	else if(folderExist){
 		folders[indexOfFolder]->setPerm(newPerm);
-		//folders[indexOfFolder]->updateTime();
 	}
 }
 
