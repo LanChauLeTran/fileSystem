@@ -19,7 +19,7 @@ class Folder{
 	
 	public:
 		Folder(const string& folderName, const string& u, const string& g);
-		Folder(): parent(nullptr), name("/"), user("user"), group("Users") {}
+		Folder(): parent(nullptr), name("home"), user("user"), group("Users") {}
 		~Folder();
 
 		string getName() const;
@@ -40,7 +40,7 @@ class Folder{
 		void mkdir(const string& dirName, const string& u, const string& g);
 		void ls(const User& user) const;
 		void lsl(const User& user) const;
-		Folder* cd(const string& name);
+		Folder* cd(const string& name, const User& u);
 		void pwd();
 		void rmdir(const string& dir);
 		void rm(const string& target);

@@ -38,7 +38,7 @@ int main(){
 	while(cont){ //read in commands until exit or quit
 		parsed.clear();
 		cout << BOLDGREEN << curUser->getName() << RESET << ":"
-			 << BOLDBLUE << curDir->getName() << RESET << "$ ";
+			 << BOLDBLUE << '/' << curDir->getName() << RESET << "$ ";
 
 		getline(cin, input);
 		istringstream ss(input);
@@ -68,10 +68,10 @@ int main(){
 			if(inputSize == 2){ 
 				//parse cd.. vs cd .. to run the correct command
 				if(parsed[1] != ".." && parsed[1] != "../"){ 
-					curDir = curDir->cd(parsed[1]);
+					curDir = curDir->cd(parsed[1], *curUser);
 				}
 				else if(parsed[1] == ".." || parsed[1] == "../"){
-					if(!(curDir->getName() == "/")){
+					if(!(curDir->getName() == "home")){
 						curDir = curDir->getParent();
 					}
 				}
@@ -261,6 +261,10 @@ int main(){
 					 << "' does not exist" << endl;
 			}
 			else if(inputSize == 4 && parsed[1] == "-G" &&
+					allGroups.find(parsed[2]) == allGroups.end()){
+				cout << "userdel: group '" << parsed[2] << "' does not exist\n";
+			}
+			else if(inputSize == 4 && parsed[1] == "-G" &&
             		allUsers.find(parsed[3]) != allUsers.end()){
         		if(allUsers.find(parsed[3])->second.groupExists(parsed[2])){
 					allUsers.find(parsed[3])->second.removeGroup(parsed[2]);
@@ -283,6 +287,7 @@ int main(){
 			else if(inputSize == 2 &&
 					allUsers.find(parsed[1]) != allUsers.end()){
 				curUser = &(allUsers.find(parsed[1])->second);
+				curDir = &root;
 			}
 			else if(inputSize == 2 &&
 					allUsers.find(parsed[1]) == allUsers.end()){

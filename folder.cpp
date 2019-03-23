@@ -94,7 +94,14 @@ void Folder:: touch(const string& name, const User& u){
 		if(i->getName() == name){
 			folderExist = true;
 			fileExist = true;
-			i->updateTime();
+			if( (i->getPerm()[7] == 'w') ||
+				(i->getPerm()[4] == 'w' && u.groupExists(i->getGroup())) ||
+				(i->getPerm()[1] == 'w' && i->isOwner(u.getName())) ){
+				i->updateTime();
+			}
+			else{
+				cout << "touch: permission denied" << endl;
+			}
 		}
 	}
 	if(!fileExist){
@@ -204,13 +211,21 @@ void Folder::lsl(const User& u) const{
 //param: string for for the name of the folder trying to reach
 //check that the folder exist , if it does, return the pointer
 //to that folder
-Folder* Folder::cd(const string& name){
+Folder* Folder::cd(const string& name, const User& u){
 	bool exist = false;
 	Folder* found;
-	for (auto i: folders){
+	for (auto& i: folders){
 		if(i->getName() == name){
 			exist = true;
-			found = i;
+			if( (i->getPerm()[8] == 'x') ||
+				(i->getPerm()[5] == 'x' && u.groupExists(i->getGroup())) ||
+				(i->getPerm()[2] == 'x' && isOwner(u.getName())) ){
+				found = i;
+			}
+			else{
+				cout << "cd: permission denied" << endl;
+				return this;
+			}
 		}
 	}
 	if(exist){
