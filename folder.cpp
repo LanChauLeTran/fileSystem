@@ -154,36 +154,6 @@ void Folder::mkdir(const string& d, const User& u){
 	else{
 		cout << "mkdir: '" << d << "' arlready exists" << endl;
 	}
-
-	/*
-	bool exist = false;
-	for (const auto i: folders){
-		if(i->getName() == dirName){
-			exist = true;
-		}
-	}
-	for (const auto i: files){
-		if(i.getName() == dirName){
-			exist = true;
-		}
-	}
-	if(exist){
-		cout << "mkdir: '" << dirName << "' already exists." << endl;
-	}
-	else{
-		auto newFolder = new Folder();
-		newFolder->parent = this;
-		newFolder->name = dirName;
-		newFolder->user = u.getName();
-		newFolder->group = u.topGroup();
-		newFolder->permissions = "rwxrwxrwx";
-		time_t now = time(0);
-		char* temp = ctime(&now);
-		temp[strlen(temp)-1] = '\0';
-		newFolder->timeStamp = temp;
-		newFolder->folderSize = 1024;
-		folders.push_back(newFolder);
-	}*/
 }
 
 //no params
@@ -408,7 +378,17 @@ void Folder::chmod(const string& obj, const string& perm, const User& u){
 		}
 	}
 	else if(folderExist){
-		folders[indexOfFolder]->setPerm(newPerm);
+		int i = indexOfFolder;
+		string fPerm = folders[i]->getPerm();
+
+		if( (fPerm[7] == 'w') || 
+			(fPerm[4] == 'w' && u.groupExists(files[i].getGroup())) ||
+			(fPerm[1] == 'w' && isOwner(u.getName())) ) {
+			folders[i]->setPerm(newPerm);
+		}
+		else{
+			cout << "chmod: permission denied" << endl;
+		}
 	}
 }
 
