@@ -13,7 +13,7 @@ Folder::Folder(){
 }
 
 Folder::Folder(const string& folderName, const string& u, const string& g){
-	permissions = "rwxrwxrwx";
+	permissions = "rwxr-xr-x";
 	name = folderName;
 	user = u;
 	group = g;
@@ -142,7 +142,9 @@ void Folder::mkdir(const string& d, const User& u){
 			create = true;
 		}
 		if(create){
-			auto newFolder = new Folder();
+			auto newFolder = new Folder(d, u.getName(), u.topGroup());
+
+			/*
 			newFolder->parent = this;
 			newFolder->name = d;
 			newFolder->user = u.getName();
@@ -152,7 +154,7 @@ void Folder::mkdir(const string& d, const User& u){
 			char* temp = ctime(&now);
 			temp[strlen(temp)-1] = '\0';
 			newFolder->timeStamp = temp;
-			newFolder->folderSize = 1024;
+			newFolder->folderSize = 1024;*/
 			folders.push_back(newFolder);
 		}
 		else{

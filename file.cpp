@@ -1,7 +1,7 @@
 #include "file.h"
 
 File::File(const string& fileName, const string& u, const string& g){
-	permissions = "rwxrwxrwx";
+	permissions = "rw-r--r--";
 	time_t now = time(0);
 	char* temp = ctime(&now);
 	temp[strlen(temp)-1] = '\0';
