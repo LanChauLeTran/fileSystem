@@ -277,7 +277,7 @@ void Folder::rmdir(const string& dir, const User& u){
 		(permissions[4] == 'w' && u.groupExists(group)) ||
 		(permissions[1] == 'w' && isOwner(u.getName())) )){
 		
-		cout << "touch: permission denied" << endl;
+		cout << "rmdir: permission denied" << endl;
 		return;
     }
 
@@ -313,7 +313,7 @@ void Folder::rm(const string& target, const User& u){
 		(permissions[4] == 'w' && u.groupExists(group)) ||
 		(permissions[1] == 'w' && isOwner(u.getName())) )){
 		
-		cout << "touch: permission denied" << endl;
+		cout << "rm: permission denied" << endl;
 		return;
     }
 
