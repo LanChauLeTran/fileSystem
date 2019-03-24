@@ -435,6 +435,23 @@ void Folder::chown(const string& f, const string& u, const User& curU){
 	}
 }
 
+void Folder::chgrp(const string& f, const string& u, const User& curU){
+	for(auto& i: files){
+		if((i.getName() == f)){
+			string fPerm = i.getPerm();
+
+			if( (fPerm[7] == 'w') || 
+				(fPerm[4] == 'w' && curU.groupExists(i.getGroup())) ||
+				(fPerm[1] == 'w' && i.isOwner(curU.getName())) ) {
+				i.setGroup(u);
+			}
+			else{
+				cout << "chgrp: permission denied" << endl;
+			}
+		}
+	}
+}
+
 void Folder::setPerm(const string& newPerm){
 	permissions = newPerm;
 }

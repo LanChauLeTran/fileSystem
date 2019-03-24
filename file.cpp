@@ -37,6 +37,10 @@ void File::setUser(const string& n){
 	user = n;
 }
 
+void File::setGroup(const string& n){
+	group = n;
+}
+
 bool File::isOwner(const string& n) const{
 	if(n == user){
 		return true;

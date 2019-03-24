@@ -311,6 +311,22 @@ int main(){
 				curDir->chown(parsed[2], parsed[1], *curUser);
 			}
 		}
+		else if(parsed[i] == "chgrp"){
+			if(inputSize != 3){
+				cout << "Usage: chgrp [newGroup] [file]" << endl;
+			}
+			else if(allGroups.find(parsed[1]) == allGroups.end()){
+				cout << "chgrp: new group '" << parsed[1] 
+					 << "' does not exist" << endl;
+			}
+			else if(!(curDir->fileExists(parsed[2]))){
+				cout << "chwon: file '" << parsed[2]
+					 << "' does not exist" << endl;
+			}
+			else{
+				curDir->chgrp(parsed[2], parsed[1], *curUser);
+			}
+		}
 		else if(parsed[i] == "usermod"){
 			if(inputSize != 4){
 				cout << "Usage: usermod -a -G [group]" << endl;
