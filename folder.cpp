@@ -82,6 +82,14 @@ void Folder::xFile(const string& f, const User& u) const{
 //before creating new file.
 //if it exist, update timestamp, else create a new object file
 void Folder:: touch(const string& name, const User& u){
+	if( !((permissions[7] == 'w') || 
+		(permissions[4] == 'w' && u.groupExists(group)) ||
+		(permissions[1] == 'w' && isOwner(u.getName())) )){
+		
+		cout << "touch: permission denied" << endl;
+		return;
+    }
+
 	bool fileExist = false;
 	bool folderExist = false;
 	for (auto &i: files){
@@ -263,6 +271,14 @@ void Folder::pwd(){
 //if does not exist, print error message
 //if exist, delete pointer and  erase folder 
 void Folder::rmdir(const string& dir, const User& u){
+	if( !((permissions[7] == 'w') || 
+		(permissions[4] == 'w' && u.groupExists(group)) ||
+		(permissions[1] == 'w' && isOwner(u.getName())) )){
+		
+		cout << "touch: permission denied" << endl;
+		return;
+    }
+
 	if(folderExists(dir)){
 		for(unsigned int i = 0; i < folders.size(); i++) {
 			if(folders[i]->getName() == dir){
@@ -291,6 +307,14 @@ void Folder::rmdir(const string& dir, const User& u){
 //if does not exist, print error message
 //if exist delete file object
 void Folder::rm(const string& target, const User& u){
+	if( !((permissions[7] == 'w') || 
+		(permissions[4] == 'w' && u.groupExists(group)) ||
+		(permissions[1] == 'w' && isOwner(u.getName())) )){
+		
+		cout << "touch: permission denied" << endl;
+		return;
+    }
+
 	if(fileExists(target)){
 		for(unsigned int i = 0; i < files.size(); i++) {
 			if(files[i].getName() == target){
