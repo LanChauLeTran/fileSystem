@@ -72,6 +72,7 @@ int main(){
 				}
 				else if(parsed[1] == ".." || parsed[1] == "../"){
 					if(!(curDir->getName() == "home")){
+						cout << "here" << endl;
 						curDir = curDir->getParent();
 					}
 				}
@@ -293,6 +294,21 @@ int main(){
 					allUsers.find(parsed[1]) == allUsers.end()){
 				cout << "switchto: user '" << parsed[1]
 					 << "' does not exist" << endl;
+			}
+		}
+		else if(parsed[i] == "chown"){
+			if(inputSize != 3){
+				cout << "Usage: chown [newUser] [file]" << endl;
+			}
+			else if(allUsers.find(parsed[1]) == allUsers.end()){
+				cout << "chown: new user '" << parsed[1] 
+					 << "' does not exist" << endl;
+			}else if(!(curDir->fileExists(parsed[2]))){
+				cout << "chwon: file '" << parsed[2]
+					 << "' does not exist" << endl;
+			}
+			else{
+				curDir->chown(parsed[2], parsed[1], *curUser);
 			}
 		}
 		else if(parsed[i] == "usermod"){

@@ -134,7 +134,7 @@ void Folder:: touch(const string& name, const User& u){
 //Make sure name doesnt already exist as either a file or folder
 //if exist, let user know, else create new object folder
 void Folder::mkdir(const string& d, const User& u){
-	if(!folderExists(d)){
+	if(!folderExists(d) && !fileExists(d)){
 		bool create = false;
 		if( (permissions[7] == 'w') || 
 			(permissions[4] == 'w' && u.groupExists(group)) ||
@@ -143,7 +143,7 @@ void Folder::mkdir(const string& d, const User& u){
 		}
 		if(create){
 			auto newFolder = new Folder(d, u.getName(), u.topGroup());
-
+			newFolder->parent = this;
 			/*
 			newFolder->parent = this;
 			newFolder->name = d;
@@ -396,7 +396,7 @@ void Folder::chmod(const string& obj, const string& perm, const User& u){
 
 		if( (fPerm[7] == 'w') || 
 			(fPerm[4] == 'w' && u.groupExists(files[i].getGroup())) ||
-			(fPerm[1] == 'w' && isOwner(u.getName())) ) {
+			(fPerm[1] == 'w' && files[i].isOwner(u.getName())) ) {
 			files[i].setPerm(newPerm);
 		}
 		else{
@@ -414,6 +414,23 @@ void Folder::chmod(const string& obj, const string& perm, const User& u){
 		}
 		else{
 			cout << "chmod: permission denied" << endl;
+		}
+	}
+}
+
+void Folder::chown(const string& f, const string& u, const User& curU){
+	for(auto& i: files){
+		if((i.getName() == f)){
+			string fPerm = i.getPerm();
+
+			if( (fPerm[7] == 'w') || 
+				(fPerm[4] == 'w' && curU.groupExists(i.getGroup())) ||
+				(fPerm[1] == 'w' && i.isOwner(curU.getName())) ) {
+				i.setUser(u);
+			}
+			else{
+				cout << "chown: permission denied" << endl;
+			}
 		}
 	}
 }

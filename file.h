@@ -29,6 +29,8 @@ class File{
 		string getUser() const;
 		string getGroup() const;
 
+		void setUser(const string& n);
+
 		bool isOwner(const string& n) const;
 		bool isGroup(const vector<Group>& g) const;
 
